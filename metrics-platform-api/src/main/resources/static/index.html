@@ -3,371 +3,546 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metrics Platform | Command Center</title>
+    <title>METRICS // ORBITAL_LINK_V4</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0b0c10;
-            --surface-color: #1f2833;
-            --text-primary: #c5c6c7;
-            --accent-cyan: #66fcf1;
-            --accent-blue: #45a29e;
-            --alert-red: #ff3860;
-            --success-green: #23d160;
-            --border-radius: 4px;
-            --spacing-unit: 16px;
+            --void-bg: #030407;
+            --void-dark: #000000;
+            --panel-bg: rgba(10, 15, 25, 0.65);
+            
+            --holo-cyan: #00f0ff;
+            --holo-cyan-dim: rgba(0, 240, 255, 0.2);
+            --holo-pink: #ff003c;
+            --holo-amber: #ffcc00;
+            --holo-green: #00ff9d;
+            
+            --text-pri: #e0f6ff;
+            --text-sec: #5a7b8c;
+            
+            --scan-line: rgba(0, 240, 255, 0.03);
+            --font-ui: 'Chakra Petch', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            cursor: crosshair;
+        }
+
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 999;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            opacity: 0.6;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            line-height: 1.5;
+            background-color: var(--void-bg);
+            background-image: 
+                linear-gradient(var(--scan-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--scan-line) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05) 0%, transparent 60%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            color: var(--text-pri);
+            font-family: var(--font-ui);
             height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
-        h1, h2, h3, button, input, label, th, td, .mono-font {
-            font-family: 'IBM Plex Mono', monospace;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--void-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--holo-cyan-dim); border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--holo-cyan); }
 
+        .mono { font-family: var(--font-code); }
+        .dim { color: var(--text-sec); }
+        .glitch-text { position: relative; }
+        
         header {
-            background-color: var(--surface-color);
-            padding: var(--spacing-unit);
-            border-bottom: 2px solid var(--accent-blue);
+            height: 70px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 10;
+            padding: 0 30px;
+            background: rgba(3, 4, 7, 0.9);
+            border-bottom: 1px solid var(--holo-cyan-dim);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
 
-        header h1 {
-            font-size: 1.25rem;
-            color: var(--accent-cyan);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .header-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 20px;
         }
 
-        header h1::before {
+        .logo-mark {
+            width: 30px;
+            height: 30px;
+            border: 2px solid var(--holo-cyan);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: spin-slow 20s linear infinite;
+        }
+        .logo-mark::after {
             content: '';
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            background-color: var(--accent-cyan);
-            box-shadow: 0 0 8px var(--accent-cyan);
-            border-radius: 50%;
+            width: 60%;
+            height: 60%;
+            background: var(--holo-cyan);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
         }
 
-        .status-indicator {
+        h1 {
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--holo-cyan-dim);
+        }
+
+        .status-module {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-family: var(--font-code);
             font-size: 0.8rem;
-            color: var(--accent-blue);
+            border: 1px solid var(--holo-cyan-dim);
+            padding: 5px 15px;
+            background: rgba(0, 240, 255, 0.02);
+        }
+
+        .signal-bars {
+            display: flex;
+            gap: 3px;
+            align-items: flex-end;
+            height: 15px;
+        }
+        .bar { width: 3px; background: var(--text-sec); }
+        .bar:nth-child(1) { height: 40%; }
+        .bar:nth-child(2) { height: 60%; }
+        .bar:nth-child(3) { height: 80%; }
+        .bar:nth-child(4) { height: 100%; background: var(--holo-green); box-shadow: 0 0 5px var(--holo-green); animation: signal-flicker 2s infinite; }
+
+        @keyframes signal-flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         main {
             flex: 1;
+            padding: 20px;
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 2px; 
-            background-color: #2c3e50; 
-            height: 100%;
+            grid-template-columns: 420px 1fr;
+            gap: 20px;
             overflow: hidden;
+            position: relative;
         }
 
         .panel {
-            background-color: var(--bg-color);
-            padding: calc(var(--spacing-unit) * 1.5);
-            overflow-y: auto;
+            background: var(--panel-bg);
+            border: 1px solid var(--holo-cyan-dim);
+            position: relative;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            transition: border-color 0.3s;
         }
 
+        .panel:hover {
+            border-color: rgba(0, 240, 255, 0.5);
+        }
+
+        .corner {
+            position: absolute;
+            width: 10px; height: 10px;
+            border: 2px solid var(--holo-cyan);
+            transition: 0.3s;
+        }
+        .tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+        .tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+        .bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+        .br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
         .panel-header {
-            margin-bottom: var(--spacing-unit);
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--surface-color);
-            color: var(--accent-blue);
+            padding: 15px 20px;
+            background: linear-gradient(90deg, rgba(0,240,255,0.05) 0%, transparent 100%);
+            border-bottom: 1px solid var(--holo-cyan-dim);
+            font-family: var(--font-code);
             font-size: 0.9rem;
+            color: var(--holo-cyan);
+            letter-spacing: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-content {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .form-row {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-sec);
+            margin-bottom: 8px;
+            font-family: var(--font-code);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .form-group {
-            margin-bottom: var(--spacing-unit);
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.8rem;
-            color: var(--accent-blue);
+        .input-wrapper {
+            position: relative;
         }
 
         input {
             width: 100%;
-            background-color: var(--surface-color);
-            border: 1px solid var(--accent-blue);
-            color: var(--accent-cyan);
-            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--text-sec);
+            color: var(--text-pri);
+            padding: 12px 15px;
+            font-family: var(--font-code);
             font-size: 1rem;
-            border-radius: var(--border-radius);
-            transition: all 0.2s ease;
+            outline: none;
+            transition: 0.3s;
         }
 
         input:focus {
-            outline: none;
-            box-shadow: 0 0 8px rgba(102, 252, 241, 0.3);
-            border-color: var(--accent-cyan);
+            border-color: var(--holo-cyan);
+            background: rgba(0, 240, 255, 0.05);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
         }
 
-        .btn {
-            display: inline-block;
+        .input-deco {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            color: var(--holo-cyan);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .btn-main {
             width: 100%;
-            padding: 12px;
+            padding: 16px;
             background: transparent;
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-            font-weight: 600;
+            border: 1px solid var(--holo-cyan);
+            color: var(--holo-cyan);
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 1.1rem;
             text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 10px;
-            border-radius: var(--border-radius);
+            letter-spacing: 3px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+            z-index: 1;
         }
 
-        .btn:hover {
-            background-color: rgba(102, 252, 241, 0.1);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        .btn-main::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: var(--holo-cyan);
+            z-index: -1;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .btn:active {
-            transform: translateY(1px);
+        .btn-main:hover {
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
         }
 
-        .btn-primary {
-            background-color: var(--accent-cyan);
-            color: var(--bg-color);
-            border: none;
-            box-shadow: 0 0 15px rgba(102, 252, 241, 0.4);
+        .btn-main:hover::before {
+            left: 0;
         }
 
-        .btn-primary:hover {
-            background-color: #45a29e;
-            color: #fff;
-            box-shadow: 0 0 20px rgba(102, 252, 241, 0.6);
-        }
-
-        .btn-group {
+        .btn-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--text-sec);
         }
 
-        .btn-danger {
-            border-color: var(--alert-red);
-            color: var(--alert-red);
+        .btn-small {
+            padding: 12px;
+            font-size: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--text-sec);
+            color: var(--text-sec);
+            font-family: var(--font-code);
+            text-transform: uppercase;
+            transition: 0.2s;
         }
 
-        .btn-danger:hover {
-            background-color: rgba(255, 56, 96, 0.1);
-            box-shadow: 0 0 10px rgba(255, 56, 96, 0.3);
+        .btn-small:hover {
+            border-color: var(--text-pri);
+            color: var(--text-pri);
+            background: rgba(255,255,255,0.1);
         }
 
-        .btn-success {
-            border-color: var(--success-green);
-            color: var(--success-green);
-        }
-
-        .btn-success:hover {
-            background-color: rgba(35, 209, 96, 0.1);
-            box-shadow: 0 0 10px rgba(35, 209, 96, 0.3);
+        .btn-fail:hover {
+            border-color: var(--holo-pink);
+            color: var(--holo-pink);
+            background: rgba(255, 0, 60, 0.1);
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.2);
         }
 
         #feedback-log {
-            margin-top: auto;
+            margin-top: 30px;
+            height: 180px;
+            background: #020202;
+            border: 1px solid #222;
+            padding: 15px;
+            font-family: var(--font-code);
             font-size: 0.75rem;
-            color: #888;
-            height: 100px;
             overflow-y: auto;
-            border-top: 1px solid var(--surface-color);
-            padding-top: 10px;
+            color: var(--text-sec);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
         }
-        
-        .log-entry { margin-bottom: 4px; }
-        .log-entry.success { color: var(--success-green); }
-        .log-entry.error { color: var(--alert-red); }
 
-        .table-container {
-            width: 100%;
-            overflow-x: auto;
+        .log-line {
+            margin-bottom: 4px;
+            display: flex;
+            gap: 10px;
         }
+        .log-ts { opacity: 0.4; }
+        .log-success { color: var(--holo-green); }
+        .log-error { color: var(--holo-pink); }
+        .log-info { color: var(--holo-cyan); }
 
         table {
             width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
+            border-collapse: separate;
+            border-spacing: 0 2px;
         }
 
         th {
             text-align: left;
-            padding: 12px;
-            color: var(--accent-blue);
-            border-bottom: 2px solid var(--surface-color);
+            padding: 15px;
+            color: var(--holo-cyan);
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--holo-cyan-dim);
+            background: rgba(10, 15, 25, 0.95);
             position: sticky;
             top: 0;
-            background-color: var(--bg-color);
+            z-index: 10;
         }
 
         td {
-            padding: 12px;
-            border-bottom: 1px solid var(--surface-color);
-            color: var(--text-primary);
+            padding: 15px;
+            background: rgba(255,255,255,0.01);
+            font-size: 0.95rem;
+            transition: 0.2s;
+            border-left: 2px solid transparent;
+        }
+
+        tr {
+            animation: fade-in 0.4s ease-out;
         }
 
         tr:hover td {
-            background-color: rgba(69, 162, 158, 0.05);
+            background: rgba(0, 240, 255, 0.05);
+            color: #fff;
+        }
+        tr:hover td:first-child {
+            border-left-color: var(--holo-cyan);
         }
 
-        .badge {
+        .status-badge {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 2px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid currentColor;
         }
 
-        .badge-active {
-            background-color: rgba(255, 56, 96, 0.15);
-            color: var(--alert-red);
-            border: 1px solid var(--alert-red);
-            animation: pulse 2s infinite;
+        .st-critical { color: var(--holo-pink); background: rgba(255,0,60,0.1); box-shadow: 0 0 10px rgba(255,0,60,0.2); }
+        .st-ok { color: var(--holo-green); background: rgba(0,255,157,0.1); }
+        .st-warn { color: var(--holo-amber); background: rgba(255,204,0,0.1); }
+
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .badge-resolved {
-            background-color: rgba(35, 209, 96, 0.15);
-            color: var(--success-green);
-            border: 1px solid var(--success-green);
-        }
+        @keyframes spin-slow { 100% { transform: rotate(360deg); } }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 56, 96, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(255, 56, 96, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 56, 96, 0); }
-        }
-
-        @media (max-width: 768px) {
-            main {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto 1fr;
-            }
+        @media (max-width: 900px) {
+            main { grid-template-columns: 1fr; }
+            .panel { min-height: 400px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Metrics Platform <span style="font-size:0.8em; opacity:0.7">// V1.0</span></h1>
-    <div class="status-indicator">SYSTEM STATUS: ONLINE</div>
+    <div class="header-left">
+        <div class="logo-mark"></div>
+        <h1>METRICS <span style="opacity: 0.5; font-size: 0.6em;">// PLATFORM_API</span></h1>
+    </div>
+    <div class="status-module">
+        <span class="dim">NET_STATUS:</span>
+        <span id="connection-status" style="color: var(--holo-green);">CONNECTED</span>
+        <div class="signal-bars">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+    </div>
 </header>
 
 <main>
     <div class="panel">
-        <div class="panel-header">Injection Control</div>
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
         
-        <form id="metricsForm">
-            <div class="form-group">
-                <label for="serviceName">SERVICE IDENTIFIER</label>
-                <input type="text" id="serviceName" value="payments-service" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="latencyMs">LATENCY (MS)</label>
-                <input type="number" id="latencyMs" value="45" required>
-            </div>
-
-            <div class="form-group">
-                <label for="statusCode">HTTP STATUS</label>
-                <input type="number" id="statusCode" value="200" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary">TRANSMIT METRIC</button>
-        </form>
-
-        <div class="panel-header" style="margin-top: 30px;">Quick Actions</div>
-        <div class="btn-group">
-            <button class="btn btn-success" onclick="sendQuickMetric(50, 200)">
-                Simulate Normal<br><small>(50ms)</small>
-            </button>
-            <button class="btn btn-danger" onclick="sendQuickMetric(350, 503)">
-                Simulate Outage<br><small>(350ms)</small>
-            </button>
+        <div class="panel-header">
+            <span>INJECTION_PROTOCOL</span>
+            <span class="mono" style="font-size:0.7em; opacity:0.6">MOD: WRITE</span>
         </div>
+        
+        <div class="panel-content">
+            <form id="metricsForm">
+                <div class="form-row">
+                    <label for="serviceName">TARGET_ID</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="serviceName" value="payments-service" required autocomplete="off">
+                        <span class="input-deco">::SVC</span>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <label for="latencyMs">LATENCY_VALUE</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="latencyMs" value="45" required>
+                        <span class="input-deco">::MS</span>
+                    </div>
+                </div>
 
-        <div id="feedback-log"></div>
+                <div class="form-row">
+                    <label for="statusCode">RETURN_CODE</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="statusCode" value="200" required>
+                        <span class="input-deco">::HTTP</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-main">EXECUTE_PACKET</button>
+            </form>
+
+            <div class="btn-grid">
+                <button class="btn-small" onclick="sendQuickMetric(50, 200)">[ PRESET: NOMINAL ]</button>
+                <button class="btn-small btn-fail" onclick="sendQuickMetric(450, 503)">[ PRESET: CRITICAL ]</button>
+                <button class="btn-small" onclick="sendQuickMetric(120, 201)">[ PRESET: CREATE ]</button>
+                <button class="btn-small btn-fail" onclick="sendQuickMetric(800, 504)">[ PRESET: TIMEOUT ]</button>
+            </div>
+
+            <div id="feedback-log">
+                <div class="log-line"><span class="log-ts">SYS</span> <span class="log-info">TERMINAL_READY...</span></div>
+            </div>
+        </div>
     </div>
 
     <div class="panel">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+
         <div class="panel-header">
-            Live Alert Telemetry
-            <span id="last-updated" style="float: right; font-size: 0.7em; opacity: 0.7">Updating...</span>
+            <span>LIVE_TELEMETRY</span>
+            <span id="last-updated" class="mono" style="font-size:0.7em; color:var(--holo-amber)">SYNCING...</span>
         </div>
         
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>TIME</th>
-                        <th>SERVICE</th>
-                        <th>TYPE</th>
-                        <th>VALUE</th>
-                        <th>STATUS</th>
-                    </tr>
-                </thead>
-                <tbody id="alerts-body">
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: #666; padding: 40px;">Waiting for telemetry data...</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="panel-content" style="padding: 0;">
+            <div style="width: 100%; height: 100%; overflow: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>TIMESTAMP</th>
+                            <th>ORIGIN</th>
+                            <th>TYPE</th>
+                            <th>METRICS</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alerts-body">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </main>
 
 <script>
-    const LOG_MAX_LINES = 20;
+    const LOG_MAX_LINES = 50;
     const logEl = document.getElementById('feedback-log');
     const form = document.getElementById('metricsForm');
+    const connStatusEl = document.getElementById('connection-status');
+    const updateTimeEl = document.getElementById('last-updated');
 
     function log(msg, type = 'info') {
         const div = document.createElement('div');
-        div.className = `log-entry ${type}`;
-        div.innerHTML = `<span style="opacity:0.5">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
-        logEl.prepend(div);
+        div.className = 'log-line';
         
-        if (logEl.children.length > LOG_MAX_LINES) {
-            logEl.lastChild.remove();
+        const now = new Date();
+        const ts = now.toISOString().split('T')[1].slice(0,8);
+        
+        let typeClass = 'log-info';
+        if(type === 'success') typeClass = 'log-success';
+        if(type === 'error') typeClass = 'log-error';
+
+        div.innerHTML = `<span class="log-ts">[${ts}]</span> <span class="${typeClass}">${msg}</span>`;
+        
+        logEl.prepend(div);
+        if (logEl.children.length > LOG_MAX_LINES) logEl.lastChild.remove();
+    }
+
+    function updateConnectionStatus(isOnline) {
+        if (isOnline) {
+            connStatusEl.innerText = "LINK_ESTABLISHED";
+            connStatusEl.style.color = "var(--holo-green)";
+            connStatusEl.style.textShadow = "0 0 10px var(--holo-green)";
+        } else {
+            connStatusEl.innerText = "LINK_OFFLINE";
+            connStatusEl.style.color = "var(--holo-pink)";
+            connStatusEl.style.textShadow = "0 0 10px var(--holo-pink)";
         }
     }
 
     function formatTime(isoString) {
-        if (!isoString) return '-';
-        return new Date(isoString).toLocaleTimeString();
+        if (!isoString) return '--:--:--';
+        return new Date(isoString).toLocaleTimeString([], { hour12: false });
     }
 
     async function sendMetric(serviceName, latencyMs, statusCode) {
@@ -385,12 +560,12 @@
             });
 
             if (res.ok) {
-                log(`Sent: ${serviceName} / ${latencyMs}ms`, 'success');
+                log(`PACKET_SENT :: ${serviceName} :: ${latencyMs}ms`, 'success');
             } else {
-                log(`Error: Server returned ${res.status}`, 'error');
+                log(`TX_FAIL :: HTTP ${res.status}`, 'error');
             }
         } catch (e) {
-            log(`Network Error: ${e.message}`, 'error');
+            log(`NET_ERR :: ${e.message}`, 'error');
         }
     }
 
@@ -402,10 +577,12 @@
             const alerts = await res.json();
             renderAlerts(alerts);
             
-            document.getElementById('last-updated').innerText = `UPDATED: ${new Date().toLocaleTimeString()}`;
+            updateTimeEl.innerText = `LAST_SYNC: ${new Date().toLocaleTimeString([], {hour12: false})}`;
+            updateConnectionStatus(true);
         } catch (e) {
-            console.error("Failed to fetch alerts", e);
-            document.getElementById('last-updated').innerText = `OFFLINE`;
+            console.error(e);
+            updateTimeEl.innerText = "SIGNAL_LOST";
+            updateConnectionStatus(false);
         }
     }
 
@@ -413,7 +590,7 @@
         const tbody = document.getElementById('alerts-body');
         
         if (alerts.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #666; padding: 40px;">No Active Alerts</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 40px; opacity: 0.5;">NO_ANOMALIES_DETECTED</td></tr>`;
             return;
         }
 
@@ -421,15 +598,16 @@
 
         tbody.innerHTML = alerts.map(alert => {
             const isResolved = alert.status === 'RESOLVED';
-            const badgeClass = isResolved ? 'badge-resolved' : 'badge-active';
+            let badgeClass = 'st-ok';
+            if (alert.status === 'OPEN') badgeClass = 'st-critical';
             
             return `
                 <tr>
-                    <td class="mono-font">${formatTime(alert.createdAt)}</td>
-                    <td>${alert.serviceName}</td>
-                    <td>${alert.type}</td>
-                    <td class="mono-font">${alert.currentValue}ms <span style="font-size:0.8em; opacity:0.5">/ ${alert.threshold}ms</span></td>
-                    <td><span class="badge ${badgeClass}">${alert.status}</span></td>
+                    <td class="mono" style="color:var(--holo-cyan)">${formatTime(alert.createdAt)}</td>
+                    <td style="font-weight:600">${alert.serviceName}</td>
+                    <td class="dim">${alert.type}</td>
+                    <td class="mono">${alert.currentValue}<span class="dim">ms</span> <span class="dim">/ ${alert.threshold}</span></td>
+                    <td><span class="status-badge ${badgeClass}">${alert.status}</span></td>
                 </tr>
             `;
         }).join('');
@@ -448,9 +626,13 @@
         sendMetric(service, latency, status);
     };
 
-    setInterval(fetchAlerts, 2000);
-    fetchAlerts(); 
-    log("System initialized. Ready.");
+    setTimeout(() => log("INIT_CORE_SYSTEMS...", 'info'), 300);
+    setTimeout(() => log("MOUNTING_DRIVES...", 'info'), 600);
+    setTimeout(() => {
+        log("SYSTEM_READY", 'success');
+        setInterval(fetchAlerts, 2000);
+        fetchAlerts();
+    }, 1200);
 
 </script>
 </body>
