@@ -22,25 +22,30 @@ The Metrics & Alerts Platform is a cloud-native microservices solution for inges
          |                        +-------------+-------------+
          +----------------------->|    metrics-api Pod        |
                                   |    (Spring Boot 3.5)      |
-                                  |  POST /metrics            |
-                                  |  GET  /stats              |
-                                  |  GET  /alerts             |
-                                  +-------------+-------------+
-                                                |
+                                  |  POST /metrics --+        |
+                                  |  GET  /stats     |        |
+                                  +------------------|--------+
+                                                     |
+                                                     v (Produce Event)
                          +----------------------+----------------------+
-                         |                                             |
-                         v                                             v
+                         |     Apache Kafka     |                      |
+                         |   (Event Streaming)  |                      |
+                         +-----------+----------+                      |
+                                     | (Consume)                       |
+                                     v                                 v (Write)
            +-------------+-------------+             +-----------------+-----------------+
-           |   PostgreSQL StatefulSet  |<----------->|    alerts-worker Pod              |
-           |   (metrics, alerts tables)|             |    (Scheduled Job Processing)     |
+           |   PostgreSQL StatefulSet  |<-----------+|    alerts-worker Pod              |
+           |   (metrics, alerts tables)|             |    (Quarkus Kafka Consumer)       |
            +---------------------------+             +-----------------------------------+
 ```
 
-## Planned Components
+## Core Components
 
-- **API Service (Spring Boot 3.5)**: REST endpoints for metric ingestion (`POST /metrics`), statistics queries (`GET /stats`), and alert retrieval (`GET /alerts`). Uses Spring Data JPA with Flyway migrations.
+- **API Service (Spring Boot 3.5)**: REST endpoints for metric ingestion (`POST /metrics`), statistics queries (`GET /stats`), and alert retrieval (`GET /alerts`). Produces ingestion events to Kafka topics asynchronously.
 
-- **Alerts Worker**: Scheduled background service computing alert conditions based on configurable thresholds (latency, error rates). Writes alerts to shared PostgreSQL instance.
+- **Apache Kafka**: Distributed event streaming platform buffering high-throughput metric data, decoupling ingestion from processing.
+
+- **Alerts Worker (Quarkus)**: Reactive Kafka consumer that processes metric events in real-time. Evaluates alert conditions (e.g., latency > 200ms) and persists alerts to PostgreSQL.
 
 - **PostgreSQL Database**: Persistent storage with indexed tables for `metric_records` and `alerts`. Deployed as Kubernetes StatefulSet with PersistentVolumeClaims.
 
@@ -57,8 +62,9 @@ The Metrics & Alerts Platform is a cloud-native microservices solution for inges
 | Layer          | Technology                              |
 |----------------|-----------------------------------------|
 | Runtime        | Java 21 (LTS)                           |
-| Framework      | Spring Boot 3.5, Spring Data JPA        |
-| Database       | PostgreSQL 15+                          |
+| Framework      | Spring Boot 3.5, Quarkus, Spring Data   |
+| Database       | PostgreSQL 16+                          |
+| Messaging      | Apache Kafka 3.7 (KRaft mode)           |
 | Migrations     | Flyway                                  |
 | Container      | Docker, OpenShift-compatible images     |
 | Orchestration  | Kubernetes (minikube, OpenShift-ready)  |
@@ -70,6 +76,5 @@ The Metrics & Alerts Platform is a cloud-native microservices solution for inges
 
 - **Observability**: Prometheus metrics export, Grafana dashboards, and distributed tracing with OpenTelemetry
 - **Multi-Region**: Active-passive database replication and geo-routing
-- **Event Streaming**: Kafka integration for real-time metric ingestion at scale
 - **Authentication**: OAuth2/OIDC integration with Red Hat SSO (Keycloak)
 - **API Gateway**: Rate limiting, request validation, and API versioning
