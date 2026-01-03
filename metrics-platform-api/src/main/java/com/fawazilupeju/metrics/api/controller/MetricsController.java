@@ -3,8 +3,11 @@ package com.fawazilupeju.metrics.api.controller;
 import com.fawazilupeju.metrics.api.domain.MetricRecord;
 import com.fawazilupeju.metrics.api.repository.MetricRecordRepository;
 import java.time.Instant;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +31,11 @@ public class MetricsController {
             request.timestamp() != null ? request.timestamp() : Instant.now());
     MetricRecord saved = repository.save(record);
     return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+  }
+
+  @GetMapping("/metrics/status/{statusCode}")
+  public List<MetricRecord> getMetricsByStatus(@PathVariable Integer statusCode) {
+    return repository.findByStatusCode(statusCode);
   }
 
   public record MetricRequest(

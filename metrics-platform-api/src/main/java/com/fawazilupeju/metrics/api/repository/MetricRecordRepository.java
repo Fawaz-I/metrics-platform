@@ -13,4 +13,6 @@ public interface MetricRecordRepository extends JpaRepository<MetricRecord, UUID
           + "m.serviceName, COUNT(m), AVG(m.latencyMs)) "
           + "FROM MetricRecord m GROUP BY m.serviceName")
   List<ServiceStats> getServiceStats();
+
+  List<MetricRecord> findByStatusCode(Integer statusCode);
 }

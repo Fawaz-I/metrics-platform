@@ -11,7 +11,7 @@ echo "Setting up Docker environment..."
 eval $(minikube docker-env)
 
 echo "Building metrics-platform-api image..."
-docker build -t metrics-platform-api:latest "${PROJECT_ROOT}/metrics-platform-api"
+docker build -t metrics-platform-api:latest -f "${PROJECT_ROOT}/metrics-platform-api/Dockerfile" "${PROJECT_ROOT}"
 
 echo "Building metrics-alerts-worker image..."
 docker build -t metrics-alerts-worker:latest -f "${PROJECT_ROOT}/metrics-platform-alerts-worker/Dockerfile" "${PROJECT_ROOT}"
