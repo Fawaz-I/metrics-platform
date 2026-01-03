@@ -23,18 +23,20 @@ The **Metrics Platform** is a distributed system for ingesting, storing, and ana
 
 ```mermaid
 graph LR
-    Client[Client / Service] -- POST /metrics --> API[Metrics API\n(Spring Boot)]
+    Client[Client / Service] -- POST /metrics --> API["Metrics API<br/>(Spring Boot)"]
     API -- Write --> DB[(PostgreSQL)]
-    Worker[Alerts Worker\n(Quarkus)] -- Read/Analysis --> DB
+    Worker["Alerts Worker<br/>(Quarkus)"] -- Read/Analysis --> DB
     Worker -- Write Alert --> DB
 ```
 
 ### Components
-| Component | Tech Stack | Responsibility | Port |
-|-----------|------------|----------------|------|
+| Component | Tech Stack | Responsibility | Internal Port |
+|-----------|------------|----------------|---------------|
 | **metrics-platform-api** | Java 21, Spring Boot 3, Hibernate | Ingests metrics, validates data, exposes stats API | `8080` |
 | **metrics-platform-alerts-worker** | Java 21, Quarkus, Panache | periodic analysis (30s), alerting logic | `8080` |
 | **PostgreSQL** | PostgreSQL 16 | Persistent storage for `metric_records` and `alerts` | `5432` |
+
+**Note on Ports:** Both services listen on port `8080` internally within their respective pods. Kubernetes assigns unique IPs to each pod, preventing conflicts. Only the API service is typically exposed externally.
 
 ---
 
