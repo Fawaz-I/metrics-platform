@@ -237,6 +237,16 @@
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
         }
 
+        /* Hide number input spinners */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
         .input-deco {
             position: absolute;
             right: 10px;
@@ -586,15 +596,23 @@
         }
     }
 
+    let lastAlertsSignature = '';
+
     function renderAlerts(alerts) {
+        // Sort first
+        alerts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        // Prevent flickering if data hasn't changed
+        const currentSignature = JSON.stringify(alerts);
+        if (currentSignature === lastAlertsSignature) return;
+        lastAlertsSignature = currentSignature;
+
         const tbody = document.getElementById('alerts-body');
         
         if (alerts.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 40px; opacity: 0.5;">NO_ANOMALIES_DETECTED</td></tr>`;
             return;
         }
-
-        alerts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         tbody.innerHTML = alerts.map(alert => {
             const isResolved = alert.status === 'RESOLVED';
