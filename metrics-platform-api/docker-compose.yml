@@ -19,8 +19,8 @@ services:
 
   api:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: metrics-platform-api/Dockerfile
     ports:
       - "8080:8080"
     environment:
