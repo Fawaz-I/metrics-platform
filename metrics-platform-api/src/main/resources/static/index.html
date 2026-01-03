@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metrics Platform | Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --surface-color: #1f2833;
+            --text-primary: #c5c6c7;
+            --accent-cyan: #66fcf1;
+            --accent-blue: #45a29e;
+            --alert-red: #ff3860;
+            --success-green: #23d160;
+            --border-radius: 4px;
+            --spacing-unit: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        h1, h2, h3, button, input, label, th, td, .mono-font {
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        header {
+            background-color: var(--surface-color);
+            padding: var(--spacing-unit);
+            border-bottom: 2px solid var(--accent-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        header h1::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-cyan);
+            border-radius: 50%;
+        }
+
+        .status-indicator {
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+        }
+
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2px; 
+            background-color: #2c3e50; 
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .panel {
+            background-color: var(--bg-color);
+            padding: calc(var(--spacing-unit) * 1.5);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            margin-bottom: var(--spacing-unit);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--surface-color);
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-unit);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+        }
+
+        input {
+            width: 100%;
+            background-color: var(--surface-color);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-cyan);
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(102, 252, 241, 0.3);
+            border-color: var(--accent-cyan);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 10px;
+            border-radius: var(--border-radius);
+        }
+
+        .btn:hover {
+            background-color: rgba(102, 252, 241, 0.1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-cyan);
+            color: var(--bg-color);
+            border: none;
+            box-shadow: 0 0 15px rgba(102, 252, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            background-color: #45a29e;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(102, 252, 241, 0.6);
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-danger {
+            border-color: var(--alert-red);
+            color: var(--alert-red);
+        }
+
+        .btn-danger:hover {
+            background-color: rgba(255, 56, 96, 0.1);
+            box-shadow: 0 0 10px rgba(255, 56, 96, 0.3);
+        }
+
+        .btn-success {
+            border-color: var(--success-green);
+            color: var(--success-green);
+        }
+
+        .btn-success:hover {
+            background-color: rgba(35, 209, 96, 0.1);
+            box-shadow: 0 0 10px rgba(35, 209, 96, 0.3);
+        }
+
+        #feedback-log {
+            margin-top: auto;
+            font-size: 0.75rem;
+            color: #888;
+            height: 100px;
+            overflow-y: auto;
+            border-top: 1px solid var(--surface-color);
+            padding-top: 10px;
+        }
+        
+        .log-entry { margin-bottom: 4px; }
+        .log-entry.success { color: var(--success-green); }
+        .log-entry.error { color: var(--alert-red); }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            color: var(--accent-blue);
+            border-bottom: 2px solid var(--surface-color);
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-color);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--surface-color);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background-color: rgba(69, 162, 158, 0.05);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 2px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background-color: rgba(255, 56, 96, 0.15);
+            color: var(--alert-red);
+            border: 1px solid var(--alert-red);
+            animation: pulse 2s infinite;
+        }
+
+        .badge-resolved {
+            background-color: rgba(35, 209, 96, 0.15);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 56, 96, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(255, 56, 96, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 56, 96, 0); }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Metrics Platform <span style="font-size:0.8em; opacity:0.7">// V1.0</span></h1>
+    <div class="status-indicator">SYSTEM STATUS: ONLINE</div>
+</header>
+
+<main>
+    <div class="panel">
+        <div class="panel-header">Injection Control</div>
+        
+        <form id="metricsForm">
+            <div class="form-group">
+                <label for="serviceName">SERVICE IDENTIFIER</label>
+                <input type="text" id="serviceName" value="payments-service" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="latencyMs">LATENCY (MS)</label>
+                <input type="number" id="latencyMs" value="45" required>
+            </div>
+
+            <div class="form-group">
+                <label for="statusCode">HTTP STATUS</label>
+                <input type="number" id="statusCode" value="200" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">TRANSMIT METRIC</button>
+        </form>
+
+        <div class="panel-header" style="margin-top: 30px;">Quick Actions</div>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="sendQuickMetric(50, 200)">
+                Simulate Normal<br><small>(50ms)</small>
+            </button>
+            <button class="btn btn-danger" onclick="sendQuickMetric(350, 503)">
+                Simulate Outage<br><small>(350ms)</small>
+            </button>
+        </div>
+
+        <div id="feedback-log"></div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            Live Alert Telemetry
+            <span id="last-updated" style="float: right; font-size: 0.7em; opacity: 0.7">Updating...</span>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>TIME</th>
+                        <th>SERVICE</th>
+                        <th>TYPE</th>
+                        <th>VALUE</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody id="alerts-body">
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #666; padding: 40px;">Waiting for telemetry data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script>
+    const LOG_MAX_LINES = 20;
+    const logEl = document.getElementById('feedback-log');
+    const form = document.getElementById('metricsForm');
+
+    function log(msg, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerHTML = `<span style="opacity:0.5">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
+        logEl.prepend(div);
+        
+        if (logEl.children.length > LOG_MAX_LINES) {
+            logEl.lastChild.remove();
+        }
+    }
+
+    function formatTime(isoString) {
+        if (!isoString) return '-';
+        return new Date(isoString).toLocaleTimeString();
+    }
+
+    async function sendMetric(serviceName, latencyMs, statusCode) {
+        try {
+            const payload = {
+                serviceName,
+                latencyMs: parseInt(latencyMs),
+                statusCode: parseInt(statusCode)
+            };
+
+            const res = await fetch('/metrics', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                log(`Sent: ${serviceName} / ${latencyMs}ms`, 'success');
+            } else {
+                log(`Error: Server returned ${res.status}`, 'error');
+            }
+        } catch (e) {
+            log(`Network Error: ${e.message}`, 'error');
+        }
+    }
+
+    async function fetchAlerts() {
+        try {
+            const res = await fetch('/alerts');
+            if (!res.ok) throw new Error(res.statusText);
+            
+            const alerts = await res.json();
+            renderAlerts(alerts);
+            
+            document.getElementById('last-updated').innerText = `UPDATED: ${new Date().toLocaleTimeString()}`;
+        } catch (e) {
+            console.error("Failed to fetch alerts", e);
+            document.getElementById('last-updated').innerText = `OFFLINE`;
+        }
+    }
+
+    function renderAlerts(alerts) {
+        const tbody = document.getElementById('alerts-body');
+        
+        if (alerts.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #666; padding: 40px;">No Active Alerts</td></tr>`;
+            return;
+        }
+
+        alerts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        tbody.innerHTML = alerts.map(alert => {
+            const isResolved = alert.status === 'RESOLVED';
+            const badgeClass = isResolved ? 'badge-resolved' : 'badge-active';
+            
+            return `
+                <tr>
+                    <td class="mono-font">${formatTime(alert.createdAt)}</td>
+                    <td>${alert.serviceName}</td>
+                    <td>${alert.type}</td>
+                    <td class="mono-font">${alert.currentValue}ms <span style="font-size:0.8em; opacity:0.5">/ ${alert.threshold}ms</span></td>
+                    <td><span class="badge ${badgeClass}">${alert.status}</span></td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const service = document.getElementById('serviceName').value;
+        const latency = document.getElementById('latencyMs').value;
+        const status = document.getElementById('statusCode').value;
+        sendMetric(service, latency, status);
+    });
+
+    window.sendQuickMetric = function(latency, status) {
+        const service = document.getElementById('serviceName').value;
+        sendMetric(service, latency, status);
+    };
+
+    setInterval(fetchAlerts, 2000);
+    fetchAlerts(); 
+    log("System initialized. Ready.");
+
+</script>
+</body>
+</html>
