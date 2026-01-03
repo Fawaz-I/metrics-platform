@@ -2,7 +2,9 @@ FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /build
 
-COPY . .
+COPY pom.xml .
+COPY metrics-platform-api metrics-platform-api
+COPY metrics-platform-alerts-worker metrics-platform-alerts-worker
 
 WORKDIR /build/metrics-platform-api
 RUN mvn clean package -DskipTests
