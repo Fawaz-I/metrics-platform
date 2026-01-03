@@ -32,6 +32,8 @@ spec:
               value: postgres
             - name: POSTGRES_PASSWORD
               value: postgres
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: kafka:9092
           readinessProbe:
             httpGet:
               path: /actuator/health

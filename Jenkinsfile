@@ -114,6 +114,8 @@ spec:
             kubectl apply -f infra/k8s/ -n metrics-platform
             
             # Verify rollout
+            kubectl rollout status deployment/postgres -n metrics-platform
+            kubectl rollout status deployment/kafka -n metrics-platform
             kubectl rollout status deployment/metrics-api -n metrics-platform
             kubectl rollout status deployment/alerts-worker -n metrics-platform
           '''

@@ -25,6 +25,10 @@ kubectl apply -f "${PROJECT_ROOT}/infra/k8s/postgres-service.yaml"
 kubectl apply -f "${PROJECT_ROOT}/infra/k8s/metrics-api-deployment.yaml"
 kubectl apply -f "${PROJECT_ROOT}/infra/k8s/metrics-api-service.yaml"
 
+echo "Deploying Kafka..."
+kubectl apply -f "${PROJECT_ROOT}/infra/k8s/kafka-deployment.yaml"
+kubectl apply -f "${PROJECT_ROOT}/infra/k8s/kafka-service.yaml"
+
 echo "Deploying alerts-worker..."
 kubectl apply -f "${PROJECT_ROOT}/infra/k8s/alerts-worker-deployment.yaml" -n metrics-platform
 

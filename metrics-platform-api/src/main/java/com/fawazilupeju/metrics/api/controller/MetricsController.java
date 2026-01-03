@@ -16,9 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class MetricsController {
 
   private final MetricRecordRepository repository;
+  private final com.fawazilupeju.metrics.api.service.MetricEventProducer producer;
 
-  public MetricsController(MetricRecordRepository repository) {
+  public MetricsController(
+      MetricRecordRepository repository,
+      com.fawazilupeju.metrics.api.service.MetricEventProducer producer) {
     this.repository = repository;
+    this.producer = producer;
   }
 
   @PostMapping("/metrics")
@@ -30,6 +34,9 @@ public class MetricsController {
             request.statusCode(),
             request.timestamp() != null ? request.timestamp() : Instant.now());
     MetricRecord saved = repository.save(record);
+
+    producer.sendMetricEvent(saved);
+
     return ResponseEntity.status(HttpStatus.CREATED).body(saved);
   }
 
