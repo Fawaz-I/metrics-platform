@@ -49,7 +49,10 @@ jobs:
     - name: Install JMeter
       run: |
         sudo apt-get update
-        sudo apt-get install -y jmeter
+        sudo apt-get install -y wget
+        wget https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz
+        tar -xzf apache-jmeter-5.6.3.tgz
+        echo "$(pwd)/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
     
     - name: Start Environment
       run: |
