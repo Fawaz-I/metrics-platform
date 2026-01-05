@@ -102,17 +102,3 @@ Run a performance test (100-1000 users ramp-up) against the local cluster:
 *   Measures throughput, latency, and error rates.
 
 ---
-
-## 🤝 Role Alignment
-This project is explicitly designed to reflect the responsibilities of the **Software Engineer** role (Job ID: R-053448) at **Red Hat**.
-
-*   **REST APIs with Java/Spring**: Implemented scalable, high-performance endpoints (`metrics-platform-api`).
-*   **Cloud-Native Java (Quarkus)**: Used for the worker node to demonstrate lightweight, fast-boot runtime capabilities (`metrics-platform-alerts-worker`).
-*   **Postgres + NoSQL**: Utilizes PostgreSQL for structured data (NoSQL integration planned).
-*   **Docker + Kubernetes**: Production-ready `Dockerfile` (multi-stage, non-root) and K8s manifests (`Deployment`, `Service`, `ConfigMap`, `Secret`).
-*   **Performance Testing**: Integrated **JMeter** suite for load validation.
-*   **CI/CD**: Full pipelines defined in **GitHub Actions** and **Jenkinsfile** (Jenkins w/ Kubernetes agents).
-
-**References:**
-*   [Red Hat Job R-053448](https://redhat.wd5.myworkdayjobs.com/en-US/Jobs/job/Software-Engineer_R-053448)
-*   [Red Hat Best Practices for Kubernetes](https://redhat-best-practices-for-k8s.github.io/guide/)
